@@ -5,7 +5,7 @@ icrv = 1;
 
 fid = fopen('Gbm.in','w');
 fprintf( fid , 'GBM test\n' );
-fprintf( fid , '%4.1f %4.1f %4.1f\n' , [SetParam.fre SetParam.zs SetParam.zr] );
+fprintf( fid , '%4.1f %4.1f %4.1f\n' , [SetParam.fre SetParam.zs SetParam.zr(1)] );
 fprintf( fid , '%4.1f %4.1f %4.1f\n' , [SetParam.rmax SetParam.ds SetParam.rdr] );
 fprintf( fid , '%4.1f %4.1f %4.1f %d\n' , [SetParam.zmax SetParam.dz SetParam.bathdr ictr] );
 fprintf( fid , '%d %4.1f %4.1f %4.1f\n' , [icrv SetParam.the1 SetParam.the2 SetParam.thei] );
