@@ -9,8 +9,8 @@
 %% init -------------------------------------------------------------------
 clear all;clc
 %% Set Point --------------------------------------------------------------
-FLPoint = [121.82 23.75]; %[Lon Lat]
-GuessPoint = [121.79 23.77]; %[Lon Lat]
+FLPoint = [121.2 22.08]; %[Lon Lat]
+GuessPoint = [121.19 22.07]; %[Lon Lat]
 
 %% load data --------------------------------------------------------------
 load /home/iyunsu/gbm/SimFunction/taidb500.mat
@@ -56,9 +56,9 @@ hold on;
 % plot(FLPoint(1),FLPoint(2),'w*','MarkerSize',20,'LineWidth',10)
 % plot(FLPoint(1),FLPoint(2),'ks','MarkerSize',13,'LineWidth',2)
 plot(FLPoint(1),FLPoint(2),'s','MarkerEdgeColor','w','MarkerFaceColor','k','MarkerSize',15,'LineWidth',2)
-text(FLPoint(1)+0.01,FLPoint(2)-0.01,'Flight Recorder','BackgroundColor','w','HorizontalAlignment','left','FontSize',25)
+text(FLPoint(1)+0.01,FLPoint(2)+0.01,'Flight Recorder','BackgroundColor','w','HorizontalAlignment','left','FontSize',25)
 hold on;
 plot(GuessPoint(1),GuessPoint(2),'o','MarkerEdgeColor','w','MarkerFaceColor','r','MarkerSize',15,'LineWidth',3)
 % plot(GuessPoint(1),GuessPoint(2),'k*','MarkerSize',13,'LineWidth',2)
-text(GuessPoint(1)-0.01,GuessPoint(2)+0.01,'Guess Point','BackgroundColor','w','HorizontalAlignment','right','FontSize',25)
+text(GuessPoint(1)-0.01,GuessPoint(2)-0.01,'Guess Point','BackgroundColor','w','HorizontalAlignment','right','FontSize',25)
 text(121.57,24,'Hualien Port','HorizontalAlignment','right','FontSize',25)

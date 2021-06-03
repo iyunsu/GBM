@@ -10,7 +10,7 @@
 clear all;clc
 
 %% Set Path ---------------------------------------------------------------
-path_output = '/home/iyunsu/gbm/Example_121.6_23.12/FRLocation/37500_5kmds20dz50/';
+path_output = '/home/iyunsu/gbm/Example_121.2_22.08/FRLocation/37500_10kmds10dz25/';
 path_func = '/home/iyunsu/gbm/SimFunction/';
 addpath (path_func);
 
@@ -21,7 +21,7 @@ load sediment.mat
 
 %% Set Param --------------------------------------------------------------
 
-Source = [121.82 23.75];
+Source = [121.2 22.08];
 slat = Source(2);
 slon = Source(1);
 SetParam.fre = 37500;             % Source Frequency (Hz)
@@ -31,12 +31,12 @@ SL = 160;
  
 
 isdep = 'flase';
-SetParam.rdr = 50;          % Reciever distance spacing (TL.out)
-SetParam.cdr = 50;
-SetParam.rmax = 5000;
+SetParam.rdr = 25;          % Reciever distance spacing (TL.out)
+SetParam.cdr = SetParam.rdr;
+SetParam.rmax = 10000;
 SetParam.m = 7;                  % month
 
-SetParam.zr = [5 10 50 100 150 200];                 % Receiver Depth (m)
+SetParam.zr = [5 10 50 100 150];                 % Receiver Depth (m)
 SetParam.ds = 10;
 SetParam.dz = 25;  
 
@@ -101,11 +101,11 @@ for ii =1:azNumber
     ssp_head = [0:2:10 15:5:100 110:10:200 220:20:300 350 400:100:1500 1600:200:6600]';
     SSP = [ssp_head];
     
-    for i = 1:length(coordLon(1,:))
+    for i = 1:1%length(coordLon(1,:))
         ssp=Extract(coordLon(ii,i),coordLat(ii,i),SetParam.m);        % The number is the month (Extraxt is the function)
         SSP(1:length(ssp),i+1)=ssp(:,4);
-        T = interp1(ssp(:,1),ssp(:,2),SetParam.depth(i),'linear','extrap');
-        Vw = interp1(ssp(:,1),ssp(:,4),SetParam.depth(i),'linear','extrap');
+        T = interp1(ssp(:,1),ssp(:,2),SetParam.depth(i),'linear');
+        Vw = interp1(ssp(:,1),ssp(:,4),SetParam.depth(i),'linear');
         
         % run GA.m
         [SetParam.cb(i),SetParam.thob(i),SetParam.alphab(i)]=GA_iys(SetParam.Mz(i), SetParam.depth(i), T, Vw);
@@ -124,11 +124,11 @@ for ii =1:azNumber
     TL = load('TL.GRID');
     TLreshape = reshape(TL(:,5),[max(SetParam.zr)-min(SetParam.zr)+1 SetParam.rmax/SetParam.cdr]);
     zSquare = ones(SetParam.rmax/SetParam.cdr+1,length(SetParam.zr)).*(SetParam.zr-SetParam.zs).^2;
-    sSquare = ones(SetParam.rmax/SetParam.cdr+1,length(SetParam.zr)).*([0:SetParam.rdr:SetParam.rmax]').^2;
+    sSquare = ones(SetParam.rmax/SetParam.cdr+1,length(SetParam.zr)).*([0:SetParam.cdr:SetParam.rmax]').^2;
     distanceFromSource2Receiver = sqrt(zSquare'+sSquare');
     switch SetParam.fre
         case 8800
-            absorptionCoeff = 6.5/1000*0.9144;
+            absorptionCoeff = 0.6/1000*0.9144;
             NL = 68;
         case 37500
             absorptionCoeff = 10/1000*0.9144;
@@ -200,8 +200,8 @@ save TLraPDra.mat PD*mAz TL*mraAz
 
 %% TL Plot
 load('TLraPDra.mat')
-lat = load('23.75_121.82_16dir_lat.txt')
-lon = load('23.75_121.82_16dir_lon.txt')
+lat = load('22.08_121.2_16dir_lat.txt')
+lon = load('22.08_121.2_16dir_lon.txt')
 for iplot = 1:length(SetParam.zr)
     eval(['TLdata = TL',num2str(SetParam.zr(iplot)),'mraAz']);
     f1 = figure(1);
@@ -220,6 +220,7 @@ for iplot = 1:length(SetParam.zr)
     eval(['PDdata = PD',num2str(SetParam.zr(iplot)),'mAz']);
     f2 = figure(2)
     surf([lon;lon(1,:)],[lat; lat(1,:)],[PDdata; PDdata(1,:)],'LineStyle','none','FaceColor','interp')
+    pdmap = [1:-0.02:0;zeros(1,51);0:0.02:1]'
     colormap(jet)
     view(2);axis equal
     c = colorbar
@@ -233,3 +234,4 @@ for iplot = 1:length(SetParam.zr)
 end
 %%
 % distance()
+% plot(TL100m);hold on;plot(TL100m_a);plot(TL100m_ra,'--')
