@@ -71,23 +71,4 @@ title({['Predictive Probability of Detection Results'],['Received Depth = ',desi
 %% Save plot
 cd(path_output)
 saveas(gcf, ['PPDresults',desireDepth,'m.jpg'])
-
-%% Zoom in (Manual)
-PPDhp = zeros(1192,1192);
-PPDhp(PPD>0.75) = 1;
-
-figure(2)
-f2 = pcolor(xPoints,yPoints,PPDhp);
-f2.LineStyle = 'none';
-[xMatrix, yMatrix] = meshgrid(xPoints,yPoints);
-ii = find(PPDhp == 1)
-lonHp = xMatrix(ii);
-latHp = yMatrix(ii);
-lonRange = [min(min(lonHp)) max(max(lonHp))];
-latRange = [min(min(latHp)) max(max(latHp))];
-
-searchPoints2ndlat = (min(min(latHp)):0.002:max(max(latHp)))';
-searchPoints2ndlon = (min(min(lonHp)):0.002:max(max(lonHp)));
-[searchPoints2ndlonMatrix, searchPoints2ndlatMatrix] = meshgrid(searchPoints2ndlon,searchPoints2ndlat);
-
-interp2()
+save(['PPDresults',desireDepth,'m.mat'], 'PPD','xPoints','yPoints')
