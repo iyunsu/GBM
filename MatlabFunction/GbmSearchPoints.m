@@ -33,16 +33,16 @@ for ii = 1:1%length(zrDepthFileName)
     lon = xdetected;
     lat = ydetected;
     %% Gbm
-    for i = 1:length(lat)
+    for ipt = 2:length(lat)
         %% Set Path
         cd(path_output)
-        newFolderName = [num2str(lon(i)),'_',num2str(lat(i)),'_',num2str(zrDepth),'m'];
+        newFolderName = [num2str(lon(ipt)),'_',num2str(lat(ipt)),'_',num2str(zrDepth),'m'];
         mkdir(newFolderName);
         cd(newFolderName);
         path_outputAz = pwd;
         
         %% Set Param for Gbm
-        Source = [lon(i) lat(i)];
+        Source = [lon(ipt) lat(ipt)];
         slat = Source(2);
         slon = Source(1);
         SetParam.fre = 37500;             % Source Frequency (Hz)
@@ -54,18 +54,18 @@ for ii = 1:1%length(zrDepthFileName)
         isdep = 'flase';
         SetParam.rdr = 10;          % Reciever distance spacing (TL.out)
         SetParam.cdr = SetParam.rdr;
-        SetParam.rmax = 5100;
+        SetParam.rmax = 5000;
         rmaxLarge = SetParam.rmax;
         SetParam.m = 7;                  % month
         
-        SetParam.zr = zrDepth;               % Receiver Depth (m)
+        SetParam.zr = 150;               % Receiver Depth (m)
         SetParam.zs = zrDepth;
         SetParam.ds = 10;                
         SetParam.dz = 10;                
         
         SetParam.bathdr = 100;            % substrate spacing
         SetParam.the1 = -89.5;
-        SetParam.the2 = 89.5;
+        SetParam.the2 = 88.5;
         SetParam.thei = 1;
          
         %% Calcualte Param --------------------------------------------------------
@@ -248,7 +248,7 @@ for ii = 1:1%length(zrDepthFileName)
         c.Label.Rotation = 90
         xlabel = ('Longitude (˚E)');
         ylabel = ('Latitude (˚N)');
-        title({['Tansmission Loss at (',num2str(Source(2)),'˚N, ',num2str(Source(1)),'˚E)'], ['Depth = ',num2str(SetParam.zr),'m']})
+        title({['Tansmission Loss at (',num2str(Source(2)),'˚N, ',num2str(Source(1)),'˚E)'], ['Depth = ',num2str(SetParam.zs),'m']})
         saveas(f1,['TL',num2str(SetParam.zr),'m.jpg'])
         
         %% PD Plot
@@ -264,8 +264,8 @@ for ii = 1:1%length(zrDepthFileName)
         c.Label.Rotation = 90
         xlabel = ('Longitude (˚E)');
         ylabel = ('Latitude (˚N)');
-        title({['Predictive Probability of Detection at (',num2str(Source(2)),'˚N, ',num2str(Source(1)),'˚E)'], ['Depth = ',num2str(SetParam.zr),'m']})
-        saveas(f2,['PD',num2str(SetParam.zr),'m.jpg'])
+        title({['Predictive Probability of Detection at (',num2str(Source(2)),'˚N, ',num2str(Source(1)),'˚E)'], ['Depth = ',num2str(SetParam.zs),'m']})
+        saveas(f2,['PD',num2str(zrDepth),'m.jpg'])
         
         %% PD plot (gray)
         f3 = figure(3)
@@ -278,14 +278,19 @@ for ii = 1:1%length(zrDepthFileName)
         caxis([0 1])
         xlim([guessPoint(1)-0.045 guessPoint(1)+0.045 ])
         ylim([guessPoint(2)-0.045 guessPoint(2)+0.045 ])
+
+        axis on
         xticks([])
         yticks([])
-        set (gca,'position',[0,0,1,1] );
-        set(gcf,'position',[14 28.3333 252.3333 252.3333])
-        saveas(f3,['PD',num2str(zrDepth),'mGray.jpg'])
+%         set (gca,'position',[0 0 1 1] );
+        set(gcf,'position',[100 100 400 400])
+        set(gcf,'paperposition',[0.1 0.1 0.9 0.9]);
+        exportgraphics(gca,['PD',num2str(zrDepth),'mGray.jpg'])
+  
         
     end
     
 end
+
 
 
