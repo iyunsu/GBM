@@ -9,9 +9,10 @@ clear all;clc
 %% Set Param
 FLPoint = [121.2 22.08];
 GuessPoint = [121.19 22.065];
-desireDepth = '5';
-sumPPD = zeros(1192,1192);
-iDivisor = zeros(1192,1192);
+desireDepth = '100';
+
+sumPPD = zeros(1474,1474);
+iDivisor = zeros(1474,1474);
 
 %% Set Path
 path_output = '/home/iyunsu/gbm/Example_121.2_22.08/GbmSearchPoints/37500';
@@ -33,8 +34,7 @@ for i = 1:length(detectedPointsFolder)
     cd (detectedPointsFolder(i).name)
     
     %% load gray jpg
-    jpg = flipud(im2double(rgb2gray(imread('PD5mGray.jpg'))));
-    jpg = jpg(4:end,1:end-3);
+    jpg = flipud(im2double(rgb2gray(imread(['PD',desireDepth,'mGray.jpg']))));
     jpg = 1-jpg;
     
     %% Average the data
@@ -72,3 +72,13 @@ title({['Predictive Probability of Detection Results'],['Received Depth = ',desi
 cd(path_output)
 saveas(gcf, ['PPDresults',desireDepth,'m.jpg'])
 save(['PPDresults',desireDepth,'m.mat'], 'PPD','xPoints','yPoints')
+
+%% Save var per meter (TBC)
+xPointsPer10m = [min(xPoints):0.0001:max(xPoints)];
+yPointsPer10m = [min(yPoints):0.0001:max(yPoints)];
+
+[lonGrid latGrid] = grid(xPointsPer10m,yPointsPer10m);
+[gridCol gridRow] = size(lonInterp);
+PPDper10m = interp2(xPoints,yPoints,PPD,reshape(lonGrid,[1,gridCol*gridRow]),reshape(lonGrid,[1,gridCol*gridRow]))
+
+saveas(['PPDresults',desireDepth,'mPer10m.mat'],'PPDper10m','lonGrid','latGrid');
