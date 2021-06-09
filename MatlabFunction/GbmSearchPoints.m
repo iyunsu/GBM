@@ -33,7 +33,7 @@ for ii = 1:1%length(zrDepthFileName)
     lon = xdetected;
     lat = ydetected;
     %% Gbm
-    for ipt = 3:length(lat)
+    for ipt = 4:length(lat)
         %% Set Path
         cd(path_output)
         newFolderName = [num2str(lon(ipt)),'_',num2str(lat(ipt)),'_',num2str(zrDepth),'m'];
@@ -284,8 +284,8 @@ for ii = 1:1%length(zrDepthFileName)
         yticks([])
 %         set (gca,'position',[0 0 1 1] );
         set(gcf,'position',[100 100 400 400])
-        set(gcf,'paperposition',[0.1 0.1 0.9 0.9]);
-        exportgraphics(gca,['PD',num2str(zrDepth),'mGray.jpg'])
+        set(gcf,'paperposition',[0 0 1 1]);
+        exportgraphics(gca,['PD',num2str(zrDepth),'mGray.png'])
   
         
     end
