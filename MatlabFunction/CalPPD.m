@@ -9,10 +9,9 @@ clear all;clc
 %% Set Param
 FLPoint = [121.2 22.08];
 GuessPoint = [121.19 22.065];
-desireDepth = '100';
+desireDepth = '5';
 
-sumPPD = zeros(1474,1474);
-iDivisor = zeros(1474,1474);
+
 
 %% Set Path
 path_output = '/home/iyunsu/gbm/Example_121.2_22.08/GbmSearchPoints/37500';
@@ -26,16 +25,26 @@ cd(path_detected)
 detectedPointsFile = dir(['PD',desireDepth,'results.mat']);
 load(detectedPointsFile.name)
 
-%% For Loop - all points
+%% Get Size of jpg 
 cd(path_output)
-
+cd (detectedPointsFolder(1).name)
+% jpgSize = (im2double(rgb2gray(imread(['PD',desireDepth,'mGray.png']))));
+% [jpgX, jpgY, jpgZ] = size(jpgSize)    
+sumPPD = zeros(1468,1468);
+iDivisor = zeros(1468, 1468);
+cd ../
+%% For Loop 
 for i = 1:length(detectedPointsFolder)
     %% Get lat amd lon from folder name
     cd (detectedPointsFolder(i).name)
     
     %% load gray jpg
-    jpg = flipud(im2double(rgb2gray(imread(['PD',desireDepth,'mGray.jpg']))));
+    jpg = flipud(im2double(rgb2gray(imread(['PD',desireDepth,'mGray.png']))));  
     jpg = 1-jpg;
+    
+    %% delete the jpg data out of frame
+    [xFrame, yFrame] = find(round(jpg,4) == 0.8510);
+    jpg = jpg(min(xFrame)+1:max(xFrame)-1,min(yFrame)+1:max(yFrame)-1);
     
     %% Average the data
     
@@ -43,8 +52,9 @@ for i = 1:length(detectedPointsFolder)
     isNotZero = find(jpg~=0);
     iDivisor(isNotZero) = iDivisor(isNotZero) +1;
     
-    cd ..
+    cd ../
 end
+
 %%
 PPD = sumPPD./iDivisor;
 xPoints = [GuessPoint(1)-0.045: 0.09/(length(PPD)-1):GuessPoint(1)+0.045];
@@ -73,12 +83,16 @@ cd(path_output)
 saveas(gcf, ['PPDresults',desireDepth,'m.jpg'])
 save(['PPDresults',desireDepth,'m.mat'], 'PPD','xPoints','yPoints')
 
-%% Save var per meter (TBC)
+%% Save var per 10me
 xPointsPer10m = [min(xPoints):0.0001:max(xPoints)];
 yPointsPer10m = [min(yPoints):0.0001:max(yPoints)];
 
-[lonGrid latGrid] = grid(xPointsPer10m,yPointsPer10m);
-[gridCol gridRow] = size(lonInterp);
-PPDper10m = interp2(xPoints,yPoints,PPD,reshape(lonGrid,[1,gridCol*gridRow]),reshape(lonGrid,[1,gridCol*gridRow]))
-
-saveas(['PPDresults',desireDepth,'mPer10m.mat'],'PPDper10m','lonGrid','latGrid');
+[lonGrid, latGrid] = meshgrid(xPointsPer10m,yPointsPer10m);
+[gridCol, gridRow] = size(lonGrid);
+PPDper10mLine = interp2(xPoints,yPoints,PPD,reshape(lonGrid,[1,gridCol*gridRow]),reshape(latGrid,[1,gridCol*gridRow]));
+PPDper10m = reshape(PPDper10mLine,[gridCol, gridRow])
+% CHECK PLOT
+% figure()
+% tt = pcolor(lonGrid, latGrid, PPDper10m)
+% tt.LineStyle = 'none'
+save(['PPDresults',desireDepth,'mPer10m.mat'],'PPDper10m','lonGrid','latGrid');
