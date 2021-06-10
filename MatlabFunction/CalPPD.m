@@ -9,7 +9,7 @@ clear all;clc
 %% Set Param
 FLPoint = [121.2 22.08];
 GuessPoint = [121.19 22.065];
-desireDepth = '5';
+desireDepth = '50';
 
 
 
@@ -91,8 +91,9 @@ yPointsPer10m = [min(yPoints):0.0001:max(yPoints)];
 [gridCol, gridRow] = size(lonGrid);
 PPDper10mLine = interp2(xPoints,yPoints,PPD,reshape(lonGrid,[1,gridCol*gridRow]),reshape(latGrid,[1,gridCol*gridRow]));
 PPDper10m = reshape(PPDper10mLine,[gridCol, gridRow])
-% CHECK PLOT
+save(['PPDresults',desireDepth,'mPer10m.mat'],'PPDper10m','lonGrid','latGrid');
+
+%% % CHECK PLOT
 % figure()
 % tt = pcolor(lonGrid, latGrid, PPDper10m)
 % tt.LineStyle = 'none'
-save(['PPDresults',desireDepth,'mPer10m.mat'],'PPDper10m','lonGrid','latGrid');
